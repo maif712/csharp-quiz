@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const quizData = [
+        // ... (quiz data remains the same)
         {
             question: "What is the correct way to declare an integer variable in C#?",
             type: "multiple-choice",
@@ -92,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const codeEditorEl = document.getElementById('code-editor');
     const submitBtn = document.getElementById('submit-btn');
     const nextBtn = document.getElementById('next-btn');
+    const showAnswerBtn = document.getElementById('show-answer-btn');
     const feedbackContainer = document.getElementById('feedback-container');
     const feedbackEl = document.getElementById('feedback');
     const explanationEl = document.getElementById('explanation');
@@ -104,6 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let score = 0;
     let selectedOption = null;
     let codeMirrorEditor = null;
+    let incorrectAttempts = 0;
+    const SHOW_ANSWER_THRESHOLD = 3;
 
     function loadQuestion() {
         const currentQuestion = quizData[currentQuestionIndex];
@@ -118,10 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         codeEditorEl.style.display = 'none';
 
+        submitBtn.style.display = 'block';
         submitBtn.disabled = true;
         nextBtn.style.display = 'none';
+        showAnswerBtn.style.display = 'none';
         feedbackContainer.style.display = 'none';
         selectedOption = null;
+        incorrectAttempts = 0;
 
         if (currentQuestion.codeSnippet) {
             codeSnippetEl.parentElement.style.display = 'block';
@@ -162,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
             codeMirrorEditor.setValue('');
+            codeMirrorEditor.setOption("readOnly", false);
             codeMirrorEditor.getWrapperElement().style.display = 'block';
             setTimeout(() => codeMirrorEditor.refresh(), 1);
 
@@ -252,33 +260,54 @@ document.addEventListener('DOMContentLoaded', () => {
             score++;
             feedbackEl.textContent = "Correct!";
             feedbackContainer.className = 'feedback-container correct';
+            submitBtn.style.display = 'none';
+            nextBtn.style.display = 'block';
+            showAnswerBtn.style.display = 'none';
+            // Disable inputs
+            if (currentQuestion.type === 'rearrange') {
+                [...rearrangeContainer.children].forEach(child => child.draggable = false);
+            } else if (codeMirrorEditor) {
+                codeMirrorEditor.setOption("readOnly", true);
+            }
+             if (currentQuestion.type === 'multiple-choice') {
+                [...optionsContainer.children].forEach(child => child.style.pointerEvents = 'none');
+            }
         } else {
-            feedbackEl.textContent = "Incorrect!";
+            incorrectAttempts++;
+            feedbackEl.textContent = "Incorrect. Please try again.";
             feedbackContainer.className = 'feedback-container incorrect';
+            if (incorrectAttempts >= SHOW_ANSWER_THRESHOLD) {
+                showAnswerBtn.style.display = 'block';
+            }
         }
 
         explanationEl.textContent = currentQuestion.explanation;
         feedbackContainer.style.display = 'block';
-        submitBtn.style.display = 'none';
-        nextBtn.style.display = 'block';
-        // Disable further interaction
-        if (currentQuestion.type === 'rearrange') {
-            [...rearrangeContainer.children].forEach(child => child.draggable = false);
-        } else if (codeMirrorEditor) {
-            codeMirrorEditor.setOption("readOnly", true);
-        }
         updateProgress();
+    });
+
+    showAnswerBtn.addEventListener('click', () => {
+        const currentQuestion = quizData[currentQuestionIndex];
+        let answerText = '';
+        if (Array.isArray(currentQuestion.answer)) {
+            answerText = currentQuestion.answer.join('\n');
+        } else {
+            answerText = currentQuestion.answer;
+        }
+
+        explanationEl.innerHTML = `<b>The correct answer is:</b><br><pre>${answerText}</pre><br>${currentQuestion.explanation}`;
+
+        if (currentQuestion.type === 'code-completion' || currentQuestion.type === 'error-finding') {
+            codeMirrorEditor.setValue(currentQuestion.answer);
+        }
+
+        showAnswerBtn.style.display = 'none';
     });
 
     nextBtn.addEventListener('click', () => {
         currentQuestionIndex++;
-        if (codeMirrorEditor) {
-            codeMirrorEditor.setOption("readOnly", false);
-        }
         if (currentQuestionIndex < quizData.length) {
             loadQuestion();
-            submitBtn.style.display = 'block';
-            nextBtn.style.display = 'none';
         } else {
             showFinalScore();
         }
@@ -294,6 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         submitBtn.style.display = 'none';
         nextBtn.style.display = 'none';
+        showAnswerBtn.style.display = 'none';
         feedbackContainer.style.display = 'none';
         progressBar.style.width = '100%';
     }

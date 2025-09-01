@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const quizData = [
-        // ... (quiz data remains the same)
         {
             question: "What is the correct way to declare an integer variable in C#?",
             type: "multiple-choice",
@@ -34,30 +33,56 @@ document.addEventListener('DOMContentLoaded', () => {
             explanation: "You need to increment 'i' in each iteration to avoid an infinite loop."
         },
         {
-            question: "Write a method named 'Add' that takes two integers and returns their sum.",
+            question: "Complete the body of this method to return the sum of the two parameters.",
             type: "code-completion",
-            codeSnippet: `public class Calculator\n{\n    // Your method here\n}`,
-            answer: `public int Add(int a, int b)\n{\n    return a + b;\n}`,
-            explanation: "A method has a return type, a name, and parameters. The 'return' keyword is used to return a value."
+            codeSnippet: `public int Add(int a, int b)\n{\n    // Your code here\n}`,
+            answer: `return a + b;`,
+            explanation: "The 'return' keyword is used to return a value from a method. In this case, it returns the sum of 'a' and 'b'."
         },
         {
-            question: "What is the purpose of a constructor in C#?",
+            question: "Which LINQ method is used to filter a collection based on a predicate?",
             type: "multiple-choice",
             options: [
-                "To destroy an object",
-                "To initialize an object's properties",
-                "To run the main application logic",
-                "To define an object's methods"
+                "Select()",
+                "Where()",
+                "First()",
+                "OrderBy()"
             ],
-            answer: "To initialize an object's properties",
-            explanation: "A constructor is a special method that is called when an object of a class is created. Its primary purpose is to initialize the object's fields."
+            answer: "Where()",
+            explanation: "The Where() extension method in LINQ is used to filter a sequence of values based on a predicate (a function that returns a boolean)."
         },
         {
-            question: "Find the error in this class definition.",
+            question: "Fill in the blank to correctly handle the exception.",
+            type: "code-completion",
+            codeSnippet: `try\n{\n    int result = 10 / int.Parse("0");\n}\ncatch (DivideByZeroException ex)\n{\n    // Your code here\n}`,
+            answer: `Console.WriteLine("Cannot divide by zero.");`,
+            explanation: "A try-catch block is used for exception handling. The 'catch' block is executed when an exception of the specified type occurs in the 'try' block."
+        },
+        {
+            question: "In C# inheritance, which keyword is used in a derived class to call the constructor of its base class?",
+            type: "multiple-choice",
+            options: [
+                "super",
+                "this",
+                "base",
+                "parent"
+            ],
+            answer: "base",
+            explanation: "The 'base' keyword is used to access members of the base class from within a derived class. It is used to call a method on the base class or to specify which base-class constructor should be called."
+        },
+        {
+            question: "Fix the error in the following code to correctly instantiate the 'Person' object.",
             type: "error-finding",
-            codeSnippet: `public class Person\n{\n    public string name;\n    public int age;\n\n    public Person(string n, int a)\n    {\n        name = n;\n        age = a;\n    }\n}\n\n// How to create an instance?\nPerson p = new Person("John");`,
-            answer: 'new Person("John", 30)',
-            explanation: "The Person constructor is defined to take two arguments (a string and an int). You must provide values for both parameters, for example: new Person(\"John\", 30)."
+            codeSnippet: `public class Person\n{\n    public string Name { get; set; }\n    public int Age { get; set; }\n\n    public Person(string name, int age)\n    {\n        Name = name;\n        Age = age;\n    }\n}\n\n// Fix the line below\nPerson p = new Person("John");`,
+            answer: `Person p = new Person("John", 30);`,
+            explanation: "The Person constructor requires two arguments (a string and an int), but only one was provided. You must provide values for both parameters."
+        },
+        {
+            question: "Fill in the blank to check if the string is null or empty.",
+            type: "code-completion",
+            codeSnippet: `string myString = GetStringFromSomewhere();\nif (// Your code here)\n{\n    Console.WriteLine("The string is empty.");\n}`,
+            answer: `string.IsNullOrEmpty(myString)`,
+            explanation: "The `string.IsNullOrEmpty()` method is a convenient way to check if a string is either null or an empty string."
         },
         {
             question: "Arrange the following lines to create a simple C# program that prints a message.",
@@ -120,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (codeMirrorEditor) {
             codeMirrorEditor.getWrapperElement().style.display = 'none';
         }
-        codeEditorEl.style.display = 'none';
+        // The original textarea is now hidden by CSS, so no need to manage its display here.
 
         submitBtn.style.display = 'block';
         submitBtn.disabled = true;
@@ -155,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } else if (currentQuestion.type === 'code-completion' || currentQuestion.type === 'error-finding') {
             optionsContainer.style.display = 'none';
-            codeEditorEl.style.display = 'block';
 
             if (!codeMirrorEditor) {
                 codeMirrorEditor = CodeMirror.fromTextArea(codeEditorEl, {

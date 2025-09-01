@@ -84,15 +84,8 @@ body {
 }
 
 #code-editor {
-    width: calc(100% - 2rem);
-    height: 150px;
-    background-color: #1e1e1e;
-    color: #d4d4d4;
-    border: 1px solid #333;
-    border-radius: 5px;
-    padding: 1rem;
-    font-family: 'Consolas', 'Courier New', monospace;
-    resize: vertical;
+    /* The original textarea is now permanently hidden, as CodeMirror builds its own UI */
+    display: none !important;
 }
 
 .CodeMirror {

@@ -53,9 +53,69 @@ document.addEventListener('DOMContentLoaded', () => {
 // 2. They move inwards, skipping any non-alphanumeric characters.
 // 3. At each step, they compare the lowercase versions of the characters.
 // 4. If a mismatch is found, it's not a palindrome.`
+        },
+        {
+            title: "FizzBuzz",
+            description: "Write a C# method that prints numbers from 1 to 100. For multiples of three, print 'Fizz' instead of the number. For multiples of five, print 'Buzz'. For numbers which are multiples of both three and five, print 'FizzBuzz'.",
+            examples: `1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz`,
+            solution: `public void FizzBuzz()
+{
+    for (int i = 1; i <= 100; i++)
+    {
+        if (i % 3 == 0 && i % 5 == 0)
+        {
+            Console.WriteLine("FizzBuzz");
+        }
+        else if (i % 3 == 0)
+        {
+            Console.WriteLine("Fizz");
+        }
+        else if (i % 5 == 0)
+        {
+            Console.WriteLine("Buzz");
+        }
+        else
+        {
+            Console.WriteLine(i);
+        }
+    }
+}
+
+// Explanation:
+// This is a classic programming problem. The key is to check for the 'FizzBuzz'
+// condition (divisible by both 3 and 5) first, because the other two
+// conditions (divisible by 3 or 5) would also be true.`
+        },
+        {
+            title: "Find Maximum Value",
+            description: "Write a C# method `FindMax` that takes an array of integers and returns the largest integer in the array.",
+            examples: `FindMax(new int[] { 1, 3, 2 }) == 3\nFindMax(new int[] { -1, -5, -2 }) == -1`,
+            solution: `public int FindMax(int[] nums)
+{
+    if (nums == null || nums.Length == 0)
+    {
+        throw new ArgumentException("Input array cannot be null or empty.");
+    }
+
+    int max = nums[0];
+    for (int i = 1; i < nums.Length; i++)
+    {
+        if (nums[i] > max)
+        {
+            max = nums[i];
+        }
+    }
+    return max;
+}
+
+// Explanation:
+// 1. Handle the edge case of a null or empty array.
+// 2. Initialize a 'max' variable with the first element of the array.
+// 3. Loop through the rest of the array, updating 'max' whenever a larger element is found.`
         }
     ];
 
+    const problemListEl = document.getElementById('problem-list');
     const problemTitleEl = document.getElementById('problem-title');
     const problemDescriptionEl = document.getElementById('problem-description');
     const problemExamplesEl = document.getElementById('problem-examples');
@@ -78,6 +138,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentProblemIndex = 0;
 
+    function populateProblemList() {
+        problemListEl.innerHTML = '';
+        problems.forEach((problem, index) => {
+            const li = document.createElement('li');
+            li.textContent = problem.title;
+            li.dataset.index = index;
+            if (index === currentProblemIndex) {
+                li.classList.add('active');
+            }
+            li.addEventListener('click', () => {
+                currentProblemIndex = index;
+                loadProblem(index);
+                // Update active class
+                document.querySelector('#problem-list li.active').classList.remove('active');
+                li.classList.add('active');
+            });
+            problemListEl.appendChild(li);
+        });
+    }
+
     function loadProblem(index) {
         const problem = problems[index];
         problemTitleEl.textContent = problem.title;
@@ -87,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
         userEditor.setValue(''); // Clear user editor
         solutionPanel.style.display = 'none'; // Hide solution panel
 
-        // We need to refresh the editor in case it was created while its container was hidden
         setTimeout(() => userEditor.refresh(), 1);
     }
 
@@ -98,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => solutionEditor.refresh(), 1);
     });
 
-    // Load the first problem by default
+    // Initial load
+    populateProblemList();
     loadProblem(currentProblemIndex);
 });

@@ -33,6 +33,38 @@ nav a.active {
     overflow: hidden;
 }
 
+#problem-list-panel {
+    width: 25%;
+    min-width: 200px;
+    padding: 1.5rem;
+    border-right: 1px solid #333;
+    overflow-y: auto;
+}
+
+#problem-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#problem-list li {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+#problem-list li:hover {
+    background-color: #3e3e42;
+}
+
+#problem-list li.active {
+    background-color: #0e639c;
+    color: white;
+}
+
+
 #problem-panel, #editor-panel {
     width: 50%;
     padding: 1.5rem;
@@ -41,7 +73,12 @@ nav a.active {
 }
 
 #problem-panel {
+    width: 37.5%;
     border-right: 1px solid #333;
+}
+
+#editor-panel {
+    width: 37.5%;
 }
 
 #problem-panel h2 {

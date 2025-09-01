@@ -2,11 +2,14 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #1e1e1e;
     color: #d4d4d4;
+    margin: 0;
+}
+
+.main-content {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    margin: 0;
+    min-height: calc(100vh - 50px); /* Adjust based on nav height */
 }
 
 #quiz-container {

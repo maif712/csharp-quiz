@@ -54,12 +54,13 @@ body {
 }
 
 #code-snippet {
+    display: block;
     background-color: #1e1e1e;
     padding: 1rem;
     border-radius: 5px;
     margin-bottom: 1rem;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+    white-space: pre;
+    overflow-x: auto;
     font-family: 'Consolas', 'Courier New', monospace;
 }
 

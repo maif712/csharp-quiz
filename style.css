@@ -95,6 +95,15 @@ body {
     resize: vertical;
 }
 
+.CodeMirror {
+    border: 1px solid #333;
+    border-radius: 5px;
+    height: auto;
+    min-height: 150px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
 #feedback-container {
     margin-top: 1rem;
     padding: 1rem;

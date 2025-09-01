@@ -15,12 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             question: "What is the output of this code?",
             type: "multiple-choice",
-            codeSnippet: `
-for (int i = 0; i < 3; i++)
-{
-    Console.Write(i + " ");
-}
-            `,
+            codeSnippet: `for (int i = 0; i < 3; i++)\n{\n    Console.Write(i + " ");\n}`,
             options: [
                 "0 1 2 ",
                 "1 2 3 ",
@@ -33,30 +28,15 @@ for (int i = 0; i < 3; i++)
         {
             question: "Complete the while loop to print numbers from 1 to 5.",
             type: "code-completion",
-            codeSnippet: `
-int i = 1;
-while (i <= 5)
-{
-    Console.WriteLine(i);
-    // Your code here
-}
-            `,
+            codeSnippet: `int i = 1;\nwhile (i <= 5)\n{\n    Console.WriteLine(i);\n    // Your code here\n}`,
             answer: "i++;",
             explanation: "You need to increment 'i' in each iteration to avoid an infinite loop."
         },
         {
             question: "Write a method named 'Add' that takes two integers and returns their sum.",
             type: "code-completion",
-            codeSnippet: `
-public class Calculator
-{
-    // Your method here
-}
-            `,
-            answer: `public int Add(int a, int b)
-{
-    return a + b;
-}`,
+            codeSnippet: `public class Calculator\n{\n    // Your method here\n}`,
+            answer: `public int Add(int a, int b)\n{\n    return a + b;\n}`,
             explanation: "A method has a return type, a name, and parameters. The 'return' keyword is used to return a value."
         },
         {
@@ -74,22 +54,7 @@ public class Calculator
         {
             question: "Find the error in this class definition.",
             type: "error-finding",
-            codeSnippet: `
-public class Person
-{
-    public string name;
-    public int age;
-
-    public Person(string n, int a)
-    {
-        name = n;
-        age = a;
-    }
-}
-
-// How to create an instance?
-Person p = new Person("John");
-            `,
+            codeSnippet: `public class Person\n{\n    public string name;\n    public int age;\n\n    public Person(string n, int a)\n    {\n        name = n;\n        age = a;\n    }\n}\n\n// How to create an instance?\nPerson p = new Person("John");`,
             answer: 'new Person("John", 30)',
             explanation: "The Person constructor is defined to take two arguments (a string and an int). You must provide values for both parameters, for example: new Person(\"John\", 30)."
         },
@@ -124,7 +89,7 @@ Person p = new Person("John");
     const codeSnippetEl = document.getElementById('code-snippet');
     const optionsContainer = document.getElementById('options-container');
     const rearrangeContainer = document.getElementById('rearrange-container');
-    const codeEditor = document.getElementById('code-editor');
+    const codeEditorEl = document.getElementById('code-editor');
     const submitBtn = document.getElementById('submit-btn');
     const nextBtn = document.getElementById('next-btn');
     const feedbackContainer = document.getElementById('feedback-container');
@@ -138,6 +103,7 @@ Person p = new Person("John");
     let currentQuestionIndex = 0;
     let score = 0;
     let selectedOption = null;
+    let codeMirrorEditor = null;
 
     function loadQuestion() {
         const currentQuestion = quizData[currentQuestionIndex];
@@ -146,7 +112,12 @@ Person p = new Person("John");
         optionsContainer.innerHTML = '';
         rearrangeContainer.innerHTML = '';
         rearrangeContainer.style.display = 'none';
-        codeEditor.style.display = 'none';
+
+        if (codeMirrorEditor) {
+            codeMirrorEditor.getWrapperElement().style.display = 'none';
+        }
+        codeEditorEl.style.display = 'none';
+
         submitBtn.disabled = true;
         nextBtn.style.display = 'none';
         feedbackContainer.style.display = 'none';
@@ -177,11 +148,23 @@ Person p = new Person("John");
             });
         } else if (currentQuestion.type === 'code-completion' || currentQuestion.type === 'error-finding') {
             optionsContainer.style.display = 'none';
-            codeEditor.style.display = 'block';
-            codeEditor.value = '';
-            codeEditor.addEventListener('input', () => {
-                submitBtn.disabled = codeEditor.value.trim() === '';
-            });
+            codeEditorEl.style.display = 'block';
+
+            if (!codeMirrorEditor) {
+                codeMirrorEditor = CodeMirror.fromTextArea(codeEditorEl, {
+                    lineNumbers: true,
+                    mode: 'text/x-csharp',
+                    theme: 'material-darker',
+                    indentUnit: 4
+                });
+                codeMirrorEditor.on('change', () => {
+                    submitBtn.disabled = codeMirrorEditor.getValue().trim() === '';
+                });
+            }
+            codeMirrorEditor.setValue('');
+            codeMirrorEditor.getWrapperElement().style.display = 'block';
+            setTimeout(() => codeMirrorEditor.refresh(), 1);
+
         } else if (currentQuestion.type === 'rearrange') {
             optionsContainer.style.display = 'none';
             rearrangeContainer.style.display = 'block';
@@ -256,7 +239,10 @@ Person p = new Person("John");
         if (currentQuestion.type === 'multiple-choice') {
             isCorrect = selectedOption.textContent === currentQuestion.answer;
         } else if (currentQuestion.type === 'code-completion' || currentQuestion.type === 'error-finding') {
-            isCorrect = codeEditor.value.trim() === currentQuestion.answer;
+            const normalize = (str) => str.replace(/\s+/g, '').toLowerCase();
+            const userAnswer = normalize(codeMirrorEditor.getValue());
+            const correctAnswer = normalize(currentQuestion.answer);
+            isCorrect = userAnswer === correctAnswer;
         } else if (currentQuestion.type === 'rearrange') {
             const rearrangedLines = [...document.querySelectorAll('#rearrange-container .rearrange-line')].map(line => line.textContent);
             isCorrect = JSON.stringify(rearrangedLines) === JSON.stringify(currentQuestion.answer);
@@ -278,12 +264,17 @@ Person p = new Person("John");
         // Disable further interaction
         if (currentQuestion.type === 'rearrange') {
             [...rearrangeContainer.children].forEach(child => child.draggable = false);
+        } else if (codeMirrorEditor) {
+            codeMirrorEditor.setOption("readOnly", true);
         }
         updateProgress();
     });
 
     nextBtn.addEventListener('click', () => {
         currentQuestionIndex++;
+        if (codeMirrorEditor) {
+            codeMirrorEditor.setOption("readOnly", false);
+        }
         if (currentQuestionIndex < quizData.length) {
             loadQuestion();
             submitBtn.style.display = 'block';
@@ -298,7 +289,9 @@ Person p = new Person("John");
         codeSnippetEl.parentElement.style.display = 'none';
         optionsContainer.style.display = 'none';
         rearrangeContainer.style.display = 'none';
-        codeEditor.style.display = 'none';
+        if (codeMirrorEditor) {
+            codeMirrorEditor.getWrapperElement().style.display = 'none';
+        }
         submitBtn.style.display = 'none';
         nextBtn.style.display = 'none';
         feedbackContainer.style.display = 'none';

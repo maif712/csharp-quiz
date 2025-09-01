@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C# Algorithm Practice</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="algorithms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html">Quiz</a>
+        <a href="algorithms.html" class="active">Algorithm Practice</a>
+    </nav>
+    <div id="practice-container">
+        <div id="problem-panel">
+            <h2 id="problem-title"></h2>
+            <p id="problem-description"></p>
+            <h3>Examples:</h3>
+            <pre id="problem-examples"></pre>
+        </div>
+        <div id="editor-panel">
+            <textarea id="code-editor-practice"></textarea>
+            <button id="compare-btn">Compare with Solution</button>
+        </div>
+    </div>
+    <div id="solution-panel" style="display: none;">
+        <h3>Optimal Solution</h3>
+        <textarea id="solution-editor"></textarea>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+    <script src="algorithms.js"></script>
+</body>
+</html>

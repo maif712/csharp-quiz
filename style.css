@@ -19,6 +19,29 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+nav {
+    background-color: #252526;
+    padding: 0.5rem 2rem;
+    border-bottom: 1px solid #333;
+    flex-shrink: 0;
+}
+
+nav a {
+    color: #d4d4d4;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+nav a:hover {
+    background-color: #3e3e42;
+}
+
+nav a.active {
+    background-color: #0e639c;
+}
+
 #progress-container {
     display: flex;
     justify-content: space-between;
